@@ -2,6 +2,9 @@ import sys
 import os
 import subprocess
 import shlex
+from autocorrect import autocorrect_command, learn_command
+
+
 
 # --- Built-in Commands ---
 
@@ -56,6 +59,9 @@ def execute_commands(commands):
     for i, command_args in enumerate(commands):
         if not command_args:
             continue
+        # --- Inline autocorrect ---
+        command_args[0] = autocorrect_command(command_args[0])
+        # --------------------------
         
         # Handle built-in commands
         if command_args[0] in BUILTIN_COMMANDS:
@@ -82,7 +88,8 @@ def execute_commands(commands):
                 shell=use_shell  # This enables Windows compatibility
             )
             # -----------------------------------------------------------
-            
+            learn_command(command_args[0])
+
             processes.append(proc)
             
             # If the previous command's output was piped, close that pipe
