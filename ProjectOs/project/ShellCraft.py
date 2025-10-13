@@ -7,21 +7,18 @@ import shlex
 
 def shell_cd(args):
     """Built-in 'cd' command."""
-    if len(args) < 2:
-        # Go to home directory if 'cd' is alone
-        target_dir = os.path.expanduser("~")
-    else:
-        target_dir = args[1]
+    # Go to the home directory if 'cd' is called without an argument
+    target_dir = os.path.expanduser("~") if len(args) < 2 else args[1]
     
     try:
         os.chdir(target_dir)
     except FileNotFoundError:
         print(f"shellcraft: cd: no such file or directory: {target_dir}", file=sys.stderr)
-    return 1
+    return 1 # Return 1 to continue the shell loop
 
 def shell_exit(args):
     """Built-in 'exit' command."""
-    return 0
+    return 0 # Return 0 to terminate the shell loop
 
 BUILTIN_COMMANDS = {
     "cd": shell_cd,
@@ -35,6 +32,7 @@ def execute_commands(commands):
     stdin_fd = sys.stdin
     stdout_fd = sys.stdout
     
+    # Handle input redirection '<'
     if '<' in commands[0]:
         index = commands[0].index('<')
         filename = commands[0][index + 1]
@@ -45,6 +43,7 @@ def execute_commands(commands):
             return 1
         commands[0] = commands[0][:index]
 
+    # Handle output redirection '>'
     if '>' in commands[-1]:
         index = commands[-1].index('>')
         filename = commands[-1][index + 1]
@@ -58,8 +57,9 @@ def execute_commands(commands):
         if not command_args:
             continue
         
+        # Handle built-in commands
         if command_args[0] in BUILTIN_COMMANDS:
-            if i > 0:
+            if i > 0: # Built-ins cannot be on the receiving end of a pipe
                 print("shellcraft: built-in commands cannot be piped.", file=sys.stderr)
                 return 1
             return BUILTIN_COMMANDS[command_args[0]](command_args)
@@ -68,18 +68,28 @@ def execute_commands(commands):
         current_stdout = stdout_fd if is_last_command else subprocess.PIPE
 
         try:
+            # --- THIS IS THE COMBINED PART FOR WINDOWS COMPATIBILITY ---
+            # On Windows, built-in commands need to be run through the shell.
+            # We check the OS and set shell=True only for Windows.
+            use_shell = sys.platform == "win32"
+            
             print(f"--- ShellCraft is executing: {command_args} ---")
             proc = subprocess.Popen(
                 command_args,
                 stdin=prev_pipe,
                 stdout=current_stdout,
-                stderr=sys.stderr
+                stderr=sys.stderr,
+                shell=use_shell  # This enables Windows compatibility
             )
+            # -----------------------------------------------------------
+            
             processes.append(proc)
             
+            # If the previous command's output was piped, close that pipe
             if prev_pipe != sys.stdin:
                 prev_pipe.close()
-                
+            
+            # The next command's input is the current command's output
             prev_pipe = proc.stdout
 
         except FileNotFoundError:
@@ -89,9 +99,11 @@ def execute_commands(commands):
             print(f"shellcraft: error: {e}", file=sys.stderr)
             return 1
 
+    # Wait for all child processes to complete
     for proc in processes:
         proc.wait()
     
+    # Clean up the file descriptor if we redirected output
     if stdout_fd != sys.stdout:
         stdout_fd.close()
 
@@ -104,27 +116,25 @@ def shell_loop():
     status = 1
     while status:
         try:
-            # --- THIS IS THE MODIFIED PART ---
+            # Create a prompt that shows the current directory
             current_dir = os.getcwd()
-            # If you want to show just the last part of the directory, you can use:
-            # current_dir_display = os.path.basename(current_dir)
             prompt = f"shellcraft:{current_dir}> "
             line = input(prompt)
-            # ----------------------------------
 
             if not line.strip():
                 continue
 
+            # Parse the line into commands, splitting by pipes
             command_strings = line.split('|')
             commands = [shlex.split(cmd) for cmd in command_strings]
             
             status = execute_commands(commands)
 
-        except EOFError:
+        except EOFError: # User pressed Ctrl+D
             print("\nExiting ShellCraft.")
             break
-        except KeyboardInterrupt:
-            print()
+        except KeyboardInterrupt: # User pressed Ctrl+C
+            print() # Move to a new line
             continue
 
 def main():
