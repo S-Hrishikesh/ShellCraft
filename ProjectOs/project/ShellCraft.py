@@ -2,8 +2,17 @@ import sys
 import os
 import subprocess
 import shlex
-from autocorrect import autocorrect_command, learn_command
 
+# --- Autocorrect + learning system ---
+from autocorrect import (
+    autocorrect_command,
+    learn_command,
+    load_learned_commands,
+    COMMON_COMMANDS
+)
+
+# --- Autocomplete system ---
+from autocomplete import setup_autocomplete
 
 
 # --- Built-in Commands ---
@@ -146,6 +155,7 @@ def shell_loop():
 
 def main():
     """Main entry point for the shell."""
+    setup_autocomplete(command_list_getter=lambda: load_learned_commands() + COMMON_COMMANDS)
     shell_loop()
 
 if __name__ == "__main__":
