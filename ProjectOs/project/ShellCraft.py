@@ -68,6 +68,7 @@ def execute_commands(commands):
         current_stdout = stdout_fd if is_last_command else subprocess.PIPE
 
         try:
+            print(f"--- ShellCraft is executing: {command_args} ---")
             proc = subprocess.Popen(
                 command_args,
                 stdin=prev_pipe,
