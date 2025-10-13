@@ -106,6 +106,9 @@ COMMON_TYPOS = {
     "more": [
         "mroe", "mre", "moer", "moee", "mor", "moree", "moore", "morf", "morz", 
         "mo4e", "m0re", "mire", "mkre", "mire", "miree"
+    ],
+    "git": [
+        "gti", "got"
     ]
 }
 
