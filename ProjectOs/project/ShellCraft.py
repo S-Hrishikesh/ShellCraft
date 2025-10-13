@@ -1,0 +1,134 @@
+import sys
+import os
+import subprocess
+import shlex
+
+# --- Built-in Commands ---
+
+def shell_cd(args):
+    """Built-in 'cd' command."""
+    if len(args) < 2:
+        # Go to home directory if 'cd' is alone
+        target_dir = os.path.expanduser("~")
+    else:
+        target_dir = args[1]
+    
+    try:
+        os.chdir(target_dir)
+    except FileNotFoundError:
+        print(f"shellcraft: cd: no such file or directory: {target_dir}", file=sys.stderr)
+    return 1
+
+def shell_exit(args):
+    """Built-in 'exit' command."""
+    return 0
+
+BUILTIN_COMMANDS = {
+    "cd": shell_cd,
+    "exit": shell_exit,
+}
+
+# --- Core Execution Logic ---
+
+def execute_commands(commands):
+    """Executes a list of commands, handling pipes and I/O redirection."""
+    stdin_fd = sys.stdin
+    stdout_fd = sys.stdout
+    
+    if '<' in commands[0]:
+        index = commands[0].index('<')
+        filename = commands[0][index + 1]
+        try:
+            stdin_fd = open(filename, 'r')
+        except FileNotFoundError:
+            print(f"shellcraft: no such file or directory: {filename}", file=sys.stderr)
+            return 1
+        commands[0] = commands[0][:index]
+
+    if '>' in commands[-1]:
+        index = commands[-1].index('>')
+        filename = commands[-1][index + 1]
+        stdout_fd = open(filename, 'w')
+        commands[-1] = commands[-1][:index]
+    
+    processes = []
+    prev_pipe = stdin_fd
+
+    for i, command_args in enumerate(commands):
+        if not command_args:
+            continue
+        
+        if command_args[0] in BUILTIN_COMMANDS:
+            if i > 0:
+                print("shellcraft: built-in commands cannot be piped.", file=sys.stderr)
+                return 1
+            return BUILTIN_COMMANDS[command_args[0]](command_args)
+
+        is_last_command = (i == len(commands) - 1)
+        current_stdout = stdout_fd if is_last_command else subprocess.PIPE
+
+        try:
+            proc = subprocess.Popen(
+                command_args,
+                stdin=prev_pipe,
+                stdout=current_stdout,
+                stderr=sys.stderr
+            )
+            processes.append(proc)
+            
+            if prev_pipe != sys.stdin:
+                prev_pipe.close()
+                
+            prev_pipe = proc.stdout
+
+        except FileNotFoundError:
+            print(f"shellcraft: command not found: {command_args[0]}", file=sys.stderr)
+            return 1
+        except Exception as e:
+            print(f"shellcraft: error: {e}", file=sys.stderr)
+            return 1
+
+    for proc in processes:
+        proc.wait()
+    
+    if stdout_fd != sys.stdout:
+        stdout_fd.close()
+
+    return 1
+
+# --- Main Shell Loop ---
+
+def shell_loop():
+    """The main loop of the shell: read, parse, execute."""
+    status = 1
+    while status:
+        try:
+            # --- THIS IS THE MODIFIED PART ---
+            current_dir = os.getcwd()
+            # If you want to show just the last part of the directory, you can use:
+            # current_dir_display = os.path.basename(current_dir)
+            prompt = f"shellcraft:{current_dir}> "
+            line = input(prompt)
+            # ----------------------------------
+
+            if not line.strip():
+                continue
+
+            command_strings = line.split('|')
+            commands = [shlex.split(cmd) for cmd in command_strings]
+            
+            status = execute_commands(commands)
+
+        except EOFError:
+            print("\nExiting ShellCraft.")
+            break
+        except KeyboardInterrupt:
+            print()
+            continue
+
+def main():
+    """Main entry point for the shell."""
+    shell_loop()
+
+if __name__ == "__main__":
+    main()
