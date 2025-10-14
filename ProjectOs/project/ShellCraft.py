@@ -2,6 +2,7 @@ import sys
 import os
 import subprocess
 import shlex
+from smart_insights import display_error
 
 # --- Autocorrect + learning system ---
 from autocorrect import (
@@ -21,21 +22,43 @@ def shell_cd(args):
     """Built-in 'cd' command."""
     # Go to the home directory if 'cd' is called without an argument
     target_dir = os.path.expanduser("~") if len(args) < 2 else args[1]
-    
+
     try:
         os.chdir(target_dir)
     except FileNotFoundError:
         print(f"shellcraft: cd: no such file or directory: {target_dir}", file=sys.stderr)
-    return 1 # Return 1 to continue the shell loop
+    return 1  # Return 1 to continue the shell loop
+
 
 def shell_exit(args):
     """Built-in 'exit' command."""
-    return 0 # Return 0 to terminate the shell loop
+    return 0  # Return 0 to terminate the shell loop
+
 
 BUILTIN_COMMANDS = {
     "cd": shell_cd,
     "exit": shell_exit,
 }
+# --- Cross-Platform Command Aliases ---
+# This layer makes ShellCraft feel consistent across Windows, Linux, and macOS.
+
+if sys.platform == "win32":
+    ALIASES = {
+        "ls": "dir",
+        "clear": "cls",
+        "cp": "copy",
+        "mv": "move",
+        "rm": "del",
+        "rmdir": "rmdir",
+        "cat": "type",
+        "pwd": "cd",
+        "grep": "findstr",
+        "touch": "type nul >",
+        "man": "help",
+    }
+else:
+    ALIASES = {}
+
 
 # --- Core Execution Logic ---
 
@@ -43,7 +66,7 @@ def execute_commands(commands):
     """Executes a list of commands, handling pipes and I/O redirection."""
     stdin_fd = sys.stdin
     stdout_fd = sys.stdout
-    
+
     # Handle input redirection '<'
     if '<' in commands[0]:
         index = commands[0].index('<')
@@ -61,69 +84,72 @@ def execute_commands(commands):
         filename = commands[-1][index + 1]
         stdout_fd = open(filename, 'w')
         commands[-1] = commands[-1][:index]
-    
+
     processes = []
     prev_pipe = stdin_fd
 
     for i, command_args in enumerate(commands):
         if not command_args:
             continue
+
         # --- Inline autocorrect ---
         command_args[0] = autocorrect_command(command_args[0])
         # --------------------------
-        
+
         # Handle built-in commands
         if command_args[0] in BUILTIN_COMMANDS:
-            if i > 0: # Built-ins cannot be on the receiving end of a pipe
+            if i > 0:  # Built-ins cannot be on the receiving end of a pipe
                 print("shellcraft: built-in commands cannot be piped.", file=sys.stderr)
                 return 1
             return BUILTIN_COMMANDS[command_args[0]](command_args)
 
         is_last_command = (i == len(commands) - 1)
-        current_stdout = stdout_fd if is_last_command else subprocess.PIPE
+        use_shell = sys.platform == "win32"
 
         try:
-            # --- THIS IS THE COMBINED PART FOR WINDOWS COMPATIBILITY ---
-            # On Windows, built-in commands need to be run through the shell.
-            # We check the OS and set shell=True only for Windows.
-            use_shell = sys.platform == "win32"
-            
-            print(f"--- ShellCraft is executing: {command_args} ---")
-            proc = subprocess.Popen(
+            result = subprocess.run(
                 command_args,
                 stdin=prev_pipe,
-                stdout=current_stdout,
-                stderr=sys.stderr,
-                shell=use_shell  # This enables Windows compatibility
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                text=True,
+                shell=use_shell
             )
-            # -----------------------------------------------------------
+
+            # Print output normally
+            if result.stdout:
+                print(result.stdout, end="")
+
+            # Handle errors with smart insights
+            if result.returncode != 0 and result.stderr:
+                display_error(" ".join(command_args), result.stderr)
+
             learn_command(command_args[0])
 
-            processes.append(proc)
-            
-            # If the previous command's output was piped, close that pipe
+            # Manage pipes
             if prev_pipe != sys.stdin:
                 prev_pipe.close()
-            
-            # The next command's input is the current command's output
-            prev_pipe = proc.stdout
+
+            prev_pipe = result.stdout
 
         except FileNotFoundError:
-            print(f"shellcraft: command not found: {command_args[0]}", file=sys.stderr)
+            display_error(" ".join(command_args), f"Command not found: {command_args[0]}")
             return 1
+
         except Exception as e:
-            print(f"shellcraft: error: {e}", file=sys.stderr)
+            display_error(" ".join(command_args), str(e))
             return 1
 
     # Wait for all child processes to complete
     for proc in processes:
         proc.wait()
-    
+
     # Clean up the file descriptor if we redirected output
     if stdout_fd != sys.stdout:
         stdout_fd.close()
 
     return 1
+
 
 # --- Main Shell Loop ---
 
@@ -143,20 +169,22 @@ def shell_loop():
             # Parse the line into commands, splitting by pipes
             command_strings = line.split('|')
             commands = [shlex.split(cmd) for cmd in command_strings]
-            
+
             status = execute_commands(commands)
 
-        except EOFError: # User pressed Ctrl+D
+        except EOFError:  # User pressed Ctrl+D
             print("\nExiting ShellCraft.")
             break
-        except KeyboardInterrupt: # User pressed Ctrl+C
-            print() # Move to a new line
+        except KeyboardInterrupt:  # User pressed Ctrl+C
+            print()  # Move to a new line
             continue
+
 
 def main():
     """Main entry point for the shell."""
     setup_autocomplete(command_list_getter=lambda: load_learned_commands() + COMMON_COMMANDS)
     shell_loop()
+
 
 if __name__ == "__main__":
     main()
