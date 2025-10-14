@@ -1,15 +1,7 @@
 [
-  "lp",
-  "sl",
-  "gti",
-  "git",
-  "exit()",
-  "clc",
-  "tre",
-  "tree",
-  "sti",
-  "dir",
+  "echo",
+  "exit",
   "pip",
-  "dr",
-  "echoor"
+  "pyinstaller",
+  "tree"
 ]

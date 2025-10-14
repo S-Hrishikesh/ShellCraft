@@ -1,0 +1,56 @@
+# ---------------------------------
+# Python bytecode / cache
+# ---------------------------------
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# ---------------------------------
+# Virtual environments
+# ---------------------------------
+venv/
+.env/
+env/
+.venv/
+
+# ---------------------------------
+# IDE / Editor settings
+# ---------------------------------
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ---------------------------------
+# OS generated files
+# ---------------------------------
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ---------------------------------
+# PyInstaller build artifacts
+# ---------------------------------
+build/
+dist/
+*.spec
+
+# ---------------------------------
+# Logs and temp files
+# ---------------------------------
+*.log
+*.tmp
+*.bak
+*.old
+
+# ---------------------------------
+# Learned data file (user-generated)
+# ---------------------------------
+project/learned_cmds.json
+
+# ---------------------------------
+# Miscellaneous
+# ---------------------------------
+launch_shellcraft.bat
+.history

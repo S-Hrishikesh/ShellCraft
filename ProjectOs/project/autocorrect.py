@@ -32,19 +32,19 @@ COMMON_TYPOS = {
         "ccd", "cvd", "xd", "cd.", "cd/"
     ],
     "echo": [
-        "ehco", "eho", "eco", "ecco", "ech", "ehoh", "echp", "echi", "ehoh", 
+        "ehco", "eho", "eco", "ecco", "ech", "ehoh", "echp", "echi", "ehoh",
         "ech0", "echp", "echu", "eho0", "ech9", "ehc", "echy", "echp"
     ],
     "pwd": [
-        "pdw", "pdd", "pw", "pwf", "pwr", "pwq", "pwe", "pww", "pwdc", "pwdx", 
+        "pdw", "pdd", "pw", "pwf", "pwr", "pwq", "pwe", "pww", "pwdc", "pwdx",
         "pwd1", "pwx", "pwdd", "pwde", "pwv", "ppwd"
     ],
     "mkdir": [
-        "mdkir", "mkidr", "mkdr", "mkr", "mkkir", "mkdirr", "mkdir1", "mkid", 
+        "mdkir", "mkidr", "mkdr", "mkr", "mkkir", "mkdirr", "mkdir1", "mkid",
         "mkidr", "mkdirr", "mkrd", "mkidr", "mkdir2", "mkrir", "mkrdr", "mkkdir"
     ],
     "rmdir": [
-        "rdmir", "rmidr", "rmdr", "rmir", "rmdr", "rmdirr", "rmder", "rmidr", 
+        "rdmir", "rmidr", "rmdr", "rmir", "rmdr", "rmdirr", "rmder", "rmidr",
         "rmdir1", "rmdirr", "rmdir2", "rmddr", "rmdor", "rmdjr"
     ],
     "rm": [
@@ -52,59 +52,59 @@ COMMON_TYPOS = {
         "r.m", "r;m", "rm,", "rmmn", "rmk"
     ],
     "cp": [
-        "pc", "cpo", "cpp", "cpq", "c0p", "cpl", "cpi", "cpz", "cp;", "cpm", 
+        "pc", "cpo", "cpp", "cpq", "c0p", "cpl", "cpi", "cpz", "cp;", "cpm",
         "cpx", "cp,", "cp1", "ccp", "cp2"
     ],
     "mv": [
-        "vm", "mn", "mvb", "mvv", "mvvv", "mvf", "mvc", "mvg", "mvd", "mvn", 
+        "vm", "mn", "mvb", "mvv", "mvvv", "mvf", "mvc", "mvg", "mvd", "mvn",
         "mvx", "mv;", "mv,", "mv1", "mvvb"
     ],
     "touch": [
-        "tuch", "touc", "touhc", "tuchh", "toch", "toucj", "touvh", "tuchc", 
+        "tuch", "touc", "touhc", "tuchh", "toch", "toucj", "touvh", "tuchc",
         "touchh", "toucx", "toucg", "toucq", "touh", "touhch", "tuchj"
     ],
     "clear": [
-        "cler", "claer", "clera", "cear", "cla", "clea", "clrar", "clrar", "cleear", 
+        "cler", "claer", "clera", "cear", "cla", "clea", "clrar", "clrar", "cleear",
         "cleer", "clwar", "cldar", "clqar", "c;ear", "c,lear", "cleaf"
     ],
     "exit": [
-        "exot", "exiy", "exut", "exif", "eixt", "exiit", "exi", "exot", "exitx", 
+        "exot", "exiy", "exut", "exif", "eixt", "exiit", "exi", "exot", "exitx",
         "exot", "exotx", "exkt", "exotq", "exiot", "exutx", "exkt"
     ],
     "find": [
-        "fnid", "fidn", "fnd", "findd", "finn", "fihd", "fiod", "finf", "fijd", 
+        "fnid", "fidn", "fnd", "findd", "finn", "fihd", "fiod", "finf", "fijd",
         "fndd", "f8nd", "fjnd", "findf", "fins", "finds"
     ],
     "head": [
-        "haed", "hed", "headd", "hrad", "hade", "heda", "hedd", "heaad", "hwad", 
+        "haed", "hed", "headd", "hrad", "hade", "heda", "hedd", "heaad", "hwad",
         "heqd", "heasd", "hesd", "hrsd", "hedr", "hwad"
     ],
     "tail": [
-        "tali", "tial", "taol", "tall", "tiall", "talii", "taik", "taik", "tiall", 
+        "tali", "tial", "taol", "tall", "tiall", "talii", "taik", "taik", "tiall",
         "taill", "taol", "taliq", "tauk", "tqil", "tazl"
     ],
     "sort": [
-        "srot", "sotr", "sor", "soet", "sot", "sory", "sor5", "sortt", "soort", 
+        "srot", "sotr", "sor", "soet", "sot", "sory", "sor5", "sortt", "soort",
         "sirt", "sotr", "so4t", "s0rt", "soert", "sart"
     ],
     "chmod": [
-        "chomd", "chmd", "chdmo", "chdm", "chd", "chmdo", "chmdd", "chmof", "chmld", 
+        "chomd", "chmd", "chdmo", "chdm", "chd", "chmdo", "chmdd", "chmof", "chmld",
         "chdmo", "chmdo", "chmxd", "chm0d", "chjmd", "chmop"
     ],
     "chown": [
-        "chonw", "chowm", "choen", "chwon", "chwonw", "chownn", "chowb", "chowq", 
+        "chonw", "chowm", "choen", "chwon", "chwonw", "chownn", "chowb", "chowq",
         "ch0wn", "chawn", "chown1", "chownr", "chownu", "chownx", "chownm"
     ],
     "man": [
-        "amn", "mna", "maan", "mamn", "mn", "mann", "manb", "manm", "mwn", 
+        "amn", "mna", "maan", "mamn", "mn", "mann", "manb", "manm", "mwn",
         "mzn", "mqn", "mab", "mnan", "man1", "manq"
     ],
     "less": [
-        "lses", "les", "leess", "lss", "lesss", "lezs", "l3ss", "lews", "lsss", 
+        "lses", "les", "leess", "lss", "lesss", "lezs", "l3ss", "lews", "lsss",
         "lesx", "lessx", "lezs", "lqss", "leas", "lesz"
     ],
     "more": [
-        "mroe", "mre", "moer", "moee", "mor", "moree", "moore", "morf", "morz", 
+        "mroe", "mre", "moer", "moee", "mor", "moree", "moore", "morf", "morz",
         "mo4e", "m0re", "mire", "mkre", "mire", "miree"
     ],
     "git": [

@@ -181,4 +181,3 @@ def setup_autocomplete(bind_tab=True, command_list_getter=_get_dynamic_commands)
         readline.parse_and_bind("set completion-ignore-case on")
     except Exception:
         pass
-
