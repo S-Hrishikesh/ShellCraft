@@ -1,4 +1,3 @@
-# autocorrect.py
 import json
 import os
 
@@ -6,7 +5,7 @@ import os
 COMMON_COMMANDS = [
     "ls", "cat", "grep", "cd", "echo", "pwd", "mkdir", "rmdir",
     "rm", "cp", "mv", "touch", "clear", "exit", "find", "head",
-    "tail", "sort", "chmod", "chown", "man", "less", "more"
+    "tail", "sort", "chmod", "chown", "man", "less", "more", "git"
 ]
 
 LEARN_FILE = "learned_cmds.json"
@@ -112,14 +111,14 @@ COMMON_TYPOS = {
     ]
 }
 
-
 # Reverse mapping for O(1) correction lookup
 TYPO_CORRECTIONS = {typo: cmd for cmd, typos in COMMON_TYPOS.items() for typo in typos}
 
 # ---------------------------------------------------------------------
-# Persistent learning system (optional)
+# Load learned commands — READ ONLY
 # ---------------------------------------------------------------------
 def load_learned_commands():
+    """Load predefined learned commands, but never modify the file."""
     if os.path.exists(LEARN_FILE):
         try:
             with open(LEARN_FILE, "r") as f:
@@ -128,15 +127,9 @@ def load_learned_commands():
             return []
     return []
 
-def save_learned_commands(commands):
-    with open(LEARN_FILE, "w") as f:
-        json.dump(commands, f, indent=2)
-
 def learn_command(command):
-    learned = load_learned_commands()
-    if command not in COMMON_COMMANDS and command not in learned:
-        learned.append(command)
-        save_learned_commands(learned)
+    """Disabled learning — does nothing."""
+    return
 
 # ---------------------------------------------------------------------
 # Core autocorrect
@@ -145,7 +138,7 @@ def autocorrect_command(command):
     """
     Fast and reliable autocorrect:
     1. Checks against predefined typo list.
-    2. Falls back to learned commands (case-insensitive match).
+    2. Falls back to learned commands (read-only).
     """
     cmd_lower = command.lower()
 
@@ -153,7 +146,7 @@ def autocorrect_command(command):
     if cmd_lower in TYPO_CORRECTIONS:
         return TYPO_CORRECTIONS[cmd_lower]
 
-    # Step 2: check learned commands
+    # Step 2: check learned commands (read-only)
     learned = load_learned_commands()
     for learned_cmd in learned:
         if cmd_lower == learned_cmd.lower():
