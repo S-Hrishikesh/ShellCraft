@@ -78,8 +78,8 @@ ShellCraft was developed through a high-pressure, two-round evaluation process:
 
 ## 👥 The Team: Kernel Conquerers
 
-* **A** - Core Logic & Process Management
-* **B** - Autocomplete & Autocorrect Implementation
-* **[Your Name]** - System Integration & Architecture
+* **S Hrishikesh** - Core Logic & Process Management
+* **Vishal Narayan** - Autocomplete & Autocorrect Implementation
+* **Graceson B** - System Integration & Architecture
 
 ---
