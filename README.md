@@ -83,13 +83,3 @@ ShellCraft was developed through a high-pressure, two-round evaluation process:
 * **[Your Name]** - System Integration & Architecture
 
 ---
-
-## 📜 License
-
-This project is open-source and available under the MIT License.
-
----
-
-### **Next Step for you:**
-
-Would you like me to add a **"Future Roadmap"** section to this README to show the judges or LinkedIn viewers how you plan to scale this (e.g., adding Git status integration or syntax highlighting)?
